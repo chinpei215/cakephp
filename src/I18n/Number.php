@@ -218,6 +218,15 @@ class Number
         }
 
         $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
+
+        if ($currency) {
+            // Setting the CURRENCY_CODE attribute, NumberFormatter also changes the format pattern.
+            // We need to restore it.
+            $pattern = $formatter->getPattern();
+            $formatter->setTextAttribute(NumberFormatter::CURRENCY_CODE, $currency);
+            $formatter->setPattern($pattern);
+        }
+
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value = $value * 100;
@@ -227,7 +236,9 @@ class Number
 
         $before = isset($options['before']) ? $options['before'] : null;
         $after = isset($options['after']) ? $options['after'] : null;
-        return $before . $formatter->formatCurrency($value, $currency) . $after;
+
+        // We don't use formatCurrency(), as it doesn't allow to change the format pattern.
+        return $before . $formatter->format($value) . $after;
     }
 
     /**

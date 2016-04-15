@@ -271,6 +271,14 @@ class NumberTest extends TestCase
         $result = $this->Number->currency('22.389', 'CAD');
         $expected = 'CA$22.39';
         $this->assertEquals($expected, $result);
+
+        $result = $this->Number->currency('120000', 'USD', ['places' => 0]);
+        $expected = '$120,000';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Number->currency('120000', 'USD', ['places' => 0, 'locale' => 'en_GB']);
+        $expected = 'US$120,000';
+        $this->assertEquals($expected, $result);
     }
 
     /**
